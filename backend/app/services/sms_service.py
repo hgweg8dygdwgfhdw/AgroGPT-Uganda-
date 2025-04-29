@@ -3,12 +3,13 @@ import os
 import requests
 from datetime import datetime
 import json
+from ..utils.config import get_settings
 
 class SMSService:
-    def __init__(self, api_key: str, api_secret: str):
+    def __init__(self, api_key: str, api_secret: str, base_url: str = None):
         self.api_key = api_key
         self.api_secret = api_secret
-        self.base_url = "https://api.smsprovider.com/v1"  # Replace with actual SMS provider URL
+        self.base_url = base_url or get_settings().SMS_API_URL  # <-- Add SMS_API_URL to your config/env
         
     def send_sms(self, phone_number: str, message: str) -> Dict:
         """Send SMS to a phone number"""
@@ -114,8 +115,7 @@ class SMSServiceFactory:
     def create_sms_service() -> SMSService:
         api_key = os.getenv("SMS_API_KEY")
         api_secret = os.getenv("SMS_API_SECRET")
-        
+        base_url = os.getenv("SMS_API_URL")  # <-- Add this to your .env
         if not api_key or not api_secret:
             raise ValueError("SMS API credentials not found in environment variables")
-            
-        return SMSService(api_key, api_secret) 
+        return SMSService(api_key, api_secret, base_url) 

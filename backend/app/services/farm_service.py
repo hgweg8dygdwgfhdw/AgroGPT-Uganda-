@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 from ..models.farm import Farm
 from ..models.user import User
 from typing import List, Optional
+from fastapi import Depends
+from ..config.database import get_db
 
 class FarmService:
     @staticmethod
-    async def create_farm(farm_data: dict, user: User) -> Farm:
+    async def create_farm(farm_data: dict, user: User, db: Session = Depends(get_db)) -> Farm:
         farm = Farm(
             user_id=user.id,
             name=farm_data["name"],
@@ -17,35 +19,37 @@ class FarmService:
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow()
         )
-        # Add to database session and commit
+        db.add(farm)
+        db.commit()
+        db.refresh(farm)
         return farm
 
     @staticmethod
-    async def get_farms_by_user(user_id: int) -> List[Farm]:
-        # Query farms by user_id
-        return []
+    async def get_farms_by_user(user_id: int, db: Session = Depends(get_db)) -> List[Farm]:
+        return db.query(Farm).filter(Farm.user_id == user_id).all()
 
     @staticmethod
-    async def get_farm(farm_id: int) -> Optional[Farm]:
-        # Query farm by id
-        return None
+    async def get_farm(farm_id: int, db: Session = Depends(get_db)) -> Optional[Farm]:
+        return db.query(Farm).filter(Farm.id == farm_id).first()
 
     @staticmethod
-    async def update_farm(farm_id: int, farm_data: dict) -> Farm:
-        farm = await FarmService.get_farm(farm_id)
+    async def update_farm(farm_id: int, farm_data: dict, db: Session = Depends(get_db)) -> Optional[Farm]:
+        farm = await FarmService.get_farm(farm_id, db)
         if farm:
             for key, value in farm_data.items():
                 if hasattr(farm, key):
                     setattr(farm, key, value)
             farm.updated_at = datetime.utcnow()
-            # Update in database
+            db.commit()
+            db.refresh(farm)
             return farm
         return None
 
     @staticmethod
-    async def delete_farm(farm_id: int) -> bool:
-        farm = await FarmService.get_farm(farm_id)
+    async def delete_farm(farm_id: int, db: Session = Depends(get_db)) -> bool:
+        farm = await FarmService.get_farm(farm_id, db)
         if farm:
-            # Delete from database
+            db.delete(farm)
+            db.commit()
             return True
         return False 

@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # SMS Gateway
     SMS_API_KEY: str
     SMS_SENDER_ID: str
+    SMS_API_URL: str
     
     # Debug mode
     DEBUG: bool = False

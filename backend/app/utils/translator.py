@@ -33,12 +33,11 @@ class Translator:
         """Translate text to target language"""
         if target_lang not in self.supported_languages:
             raise ValueError(f"Unsupported language: {target_lang}")
-            
         if target_lang == source_lang:
             return text
-            
+        # TODO: Integrate a real translation API here for production use
+        # Example: return real_translation_api.translate(text, target_lang, source_lang)
         # Simple word-for-word translation
-        # In a real implementation, this would use a proper translation API
         translation = self.translations[target_lang].get(text, text)
         return translation
 

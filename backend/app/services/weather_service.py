@@ -58,7 +58,8 @@ class WeatherService:
         """Get agricultural weather metrics"""
         forecast = await WeatherService.get_forecast(location, days=1)
         current = await WeatherService.get_current_weather(location)
-        
+        # TODO: Integrate real soil moisture data from a suitable API or sensor platform
+        # Example: soil_moisture = await WeatherService.get_soil_moisture(location)
         return {
             "rainfall_mm": forecast[0]["day"]["totalprecip_mm"],
             "soil_moisture": None,  # Would require additional API or sensor data

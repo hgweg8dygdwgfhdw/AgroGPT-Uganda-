@@ -39,7 +39,9 @@ def download_models():
         disease_model_path = MODEL_DIR / "disease_classifier.pth"
         if not disease_model_path.exists():
             print("Downloading disease classifier model...")
-            # TODO: Replace with actual model download URL
+            # TODO: Set the actual model download URL below
+            MODEL_URL = "https://example.com/path/to/real/disease_classifier.pth"  # <-- Replace with real URL
+            # Uncomment the next line and set MODEL_URL to enable real download
             # download_file(MODEL_URL, disease_model_path, "Disease Classifier")
             
             # For now, create a dummy model
